@@ -9,19 +9,25 @@ class Response {
         ctx.status = 200;
         ctx.type = 'json';
         ctx.body = json;
-        
     }
 
     static error(ctx, message = "Server error", status = 500) {
         ctx.status = status;
         ctx.type = "json";
-        ctx.body = { success: 0, message: message };
+        ctx.body = {
+            success: 0,
+            message: message,
+            status: status
+        };
     }
 
     static success(ctx, data = {}) {
         ctx.status = 200;
         ctx.type = "json";
-        ctx.body = { success: 1, ...data };
+        ctx.body = {
+            success: 1,
+            ...data
+        };
     }
 }
 
