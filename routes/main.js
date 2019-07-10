@@ -2,53 +2,58 @@ const Router = require("koa2-router");
 
 const AppModule = require("core/modules/AppModule");
 
-const Response = require("core/Response");
+const validator = require("koa-yup-validator");
 
-const Users = require("../users");
+const yup = require("yup");
+
+const schema = yup.object().shape({
+    title: yup.string()
+        .min(4, 'Should be more than 4 characters')
+        .max(20, 'Should be less than 20 characters')
+        .required('Required'),
+    description: yup.string()
+        .min(20, 'Should be more than 20 characters')
+        .required('Required'),
+    author: yup.string()
+        .min(4, 'Should be more than 4 characters')
+        .max(30, 'Should be less than 30 characters')
+        .matches(/^[a-zA-Zа-яА-Я ]+$/, 'Only letters allowed')
+        .required('Required'),
+});
+
 
 const router = new Router();
 
-const checkout = (ctx, next) => {
-    if (ctx.request.body.title.length > 4 && ctx.request.body.title.length < 20 &&
-        ctx.request.body.description.length > 20 && ctx.request.body.author.length > 4 &&
-        ctx.request.body.author.length < 30) {
-        return next();
-    }
-    return Response.error(ctx, "Client Error", 404);
-}
-
-const isAuthorized = (ctx, next) => {
-    for (let user in Users) {
-        if (ctx.request.body.username === Users[user].username &&
-            ctx.request.body.password === Users[user].password) {
-            return next();
-        }
-    }
-    return Response.error(ctx, "Client Error", 404);
-}
-
-router.get("/ideas", ctx => {
+router.get("/getIdeas", async ctx => {
     return AppModule.getIdeas(ctx);
 });
 
-router.get("/ideas/:id", ctx => {
+router.get("/getIdeas/:id", async ctx => {
     return AppModule.getIdeaById(ctx);
 });
 
-router.post("/addIdeas", checkout, ctx => {
+router.post("/addIdea", async ctx => {
     return AppModule.addIdea(ctx);
 })
 
-router.delete("/ideas/:id", ctx => {
+router.delete("/deleteIdea/:id", async ctx => {
     return AppModule.deleteIdea(ctx);
 })
 
-router.put("/ideas/:id", checkout, ctx => {
+router.put("/getIdeas/:id", validator(schema), async ctx => {
     return AppModule.editIdea(ctx);
 })
 
-router.post("/user", isAuthorized, ctx => {
+// async (ctx, next) => {
+//     await schema.validate(ctx.request.body).catch(e => {
+//         ctx.body = e.message
+//     })
+// }
+
+router.post("/user", async ctx => {
     return AppModule.login(ctx);
 })
+
+
 
 module.exports = router;

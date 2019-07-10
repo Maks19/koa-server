@@ -1,52 +1,43 @@
 const Response = require("core/Response");
-const Ideas = require("../../configApp");
-const Users = require("../../users");
 
 class AppModule {
     async getIdeas(ctx) {
-        const valueOfIdeas = Object.values(Ideas);
-        return Response.json(ctx, valueOfIdeas);
+        const result = await ctx.db.query(`select * from ideas`);
+        ctx.body = result.rows;
     }
 
     async getIdeaById(ctx) {
-        if (Ideas[`${ctx.params.id}`]) {
-            let valueOfIdeas = Object.values(Ideas);
-            const currId = valueOfIdeas.filter(item => {
-                return item.id === ctx.params.id
-            })
-            return Response.json(ctx, currId);
-        }
-        return Response.error(ctx);
+        const id = ctx.params.id;
+        const result = await ctx.db.query(`select * from ideas where id = $1`, [id]);
+        ctx.body = result.rows;
     }
 
     async addIdea(ctx) {
-        Ideas[`${ctx.request.body.id}`] = ctx.request.body;
-        return Response.json(ctx, Ideas);
+        const {
+            title,
+            description,
+            author
+        } = ctx.request.body
+        const result = await ctx.db.query('insert into ideas (title, description, author) values ($1, $2, $3) RETURNING *', [title, description, author])
+        ctx.body = result.rows[0];
     }
 
     async deleteIdea(ctx) {
-        if (Ideas[`${ctx.params.id}`]) {
-            let valueOfIdeas = Object.values(Ideas);
-            const currId = valueOfIdeas.filter(item => {
-                return item.id !== ctx.params.id
-            })
-            valueOfIdeas = [...currId];
-            return Response.json(ctx, valueOfIdeas);
-        }
-        return Response.error(ctx);
+        const id = ctx.params.id;
+        const result = await ctx.db.query(`delete from ideas where id = $1`, [id]);
+        ctx.body = result.rows;
     }
 
     async editIdea(ctx) {
-        if (Ideas[`${ctx.params.id}`]) {
-            let valueOfIdeas = Object.values(Ideas);
-            for (let i = 0; i < valueOfIdeas.length; i++) {
-                if (ctx.params.id === valueOfIdeas[i].id) {
-                    Ideas[`${ctx.params.id}`] = ctx.request.body
-                    return Response.json(ctx, Ideas);
-                }
-            }
-        }
-        return Response.error(ctx);
+        const id = ctx.params.id;
+        const {
+            title,
+            description,
+            author
+        } = ctx.request.body;
+        const result = await ctx.db.query(`update ideas set title = $1, description = $2, author = $3 where id = $4`,
+            [title, description, author, id]);
+        ctx.body = result.rows;
     }
 
     async login(ctx) {
