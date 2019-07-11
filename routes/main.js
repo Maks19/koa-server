@@ -21,12 +21,11 @@ const schema = yup.object().shape({
         .required('Required'),
 });
 
-
 const router = new Router();
 
 router.get("/getIdeas", async ctx => {
     return AppModule.getIdeas(ctx);
-});
+})
 
 router.get("/getIdeas/:id", async ctx => {
     return AppModule.getIdeaById(ctx);
@@ -40,7 +39,7 @@ router.delete("/deleteIdea/:id", async ctx => {
     return AppModule.deleteIdea(ctx);
 })
 
-router.put("/editIdeas/:id", validator(schema), async ctx => {
+router.put("/editIdeas/:id", async ctx => {
     return AppModule.editIdea(ctx);
 })
 

@@ -1,43 +1,45 @@
 const Response = require("core/Response");
+const Ideas = require('models/Ideas')
 
 class AppModule {
     async getIdeas(ctx) {
-        const result = await ctx.db.query(`select * from ideas`);
-        ctx.body = result.rows;
+        const ideas = await Ideas.findAll({});
+        ctx.body = ideas
     }
 
     async getIdeaById(ctx) {
-        const id = ctx.params.id;
-        const result = await ctx.db.query(`select * from ideas where id = $1`, [id]);
-        ctx.body = result.rows;
+        const ideas = await Ideas.findAll({
+            where: {
+                id: ctx.params.id
+            }
+        });
+        ctx.body = ideas
     }
 
     async addIdea(ctx) {
-        const {
-            title,
-            description,
-            author
-        } = ctx.request.body
-        const result = await ctx.db.query('insert into ideas (title, description, author) values ($1, $2, $3) RETURNING *', [title, description, author])
-        ctx.body = result.rows[0];
+        const idea = await Ideas.create(ctx.body, {
+            params: ['description', 'title']
+        });
+        ctx.body = idea
     }
 
     async deleteIdea(ctx) {
-        const id = ctx.params.id;
-        const result = await ctx.db.query(`delete from ideas where id = $1`, [id]);
-        ctx.body = result.rows;
+        const idea = await Ideas.destroy({
+            where: {
+                id: ctx.params.id
+            }
+        });
+        ctx.body = idea;
     }
 
     async editIdea(ctx) {
-        const id = ctx.params.id;
-        const {
-            title,
-            description,
-            author
-        } = ctx.request.body;
-        const result = await ctx.db.query(`update ideas set title = $1, description = $2, author = $3 where id = $4`,
-            [title, description, author, id]);
-        ctx.body = result.rows[0];
+        const idea = await Ideas.update(ctx.body, {
+            attributes: ['name', 'population'],
+            where: {
+                id: ctx.params.id
+            }
+        });
+        ctx.body = idea;
     }
 
     async login(ctx) {
