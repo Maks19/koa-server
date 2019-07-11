@@ -40,7 +40,7 @@ router.delete("/deleteIdea/:id", async ctx => {
     return AppModule.deleteIdea(ctx);
 })
 
-router.put("/getIdeas/:id", validator(schema), async ctx => {
+router.put("/editIdeas/:id", validator(schema), async ctx => {
     return AppModule.editIdea(ctx);
 })
 

@@ -37,7 +37,7 @@ class AppModule {
         } = ctx.request.body;
         const result = await ctx.db.query(`update ideas set title = $1, description = $2, author = $3 where id = $4`,
             [title, description, author, id]);
-        ctx.body = result.rows;
+        ctx.body = result.rows[0];
     }
 
     async login(ctx) {
