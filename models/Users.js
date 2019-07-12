@@ -1,19 +1,16 @@
 const Sequelize = require('sequelize');
 const sequelize = require('lib/database');
-const Users = require('models/Users');
 
-const Ideas = sequelize.define('ideas', {
-  title: {
+const Users = sequelize.define('users', {
+  name: {
     type: Sequelize.STRING,
   },
-  description: {
+  password: {
     type: Sequelize.STRING
   }
 }, {
   sequelize,
-  tableName: 'ideas',
+  tableName: 'users',
   timestamps: false
 });
-Ideas.belongsTo(Users);
-
-module.exports = Ideas;
+module.exports = Users;
