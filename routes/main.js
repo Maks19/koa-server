@@ -43,12 +43,6 @@ router.put("/editIdeas/:id", async ctx => {
     return AppModule.editIdea(ctx);
 })
 
-// async (ctx, next) => {
-//     await schema.validate(ctx.request.body).catch(e => {
-//         ctx.body = e.message
-//     })
-// }
-
 router.post("/user", async ctx => {
     return AppModule.login(ctx);
 })

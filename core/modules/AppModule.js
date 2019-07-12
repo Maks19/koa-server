@@ -39,7 +39,6 @@ class AppModule {
                 id: ctx.params.id
             }
         });
-        console.log(idea);
         ctx.body = idea;
     }
 
