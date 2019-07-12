@@ -33,12 +33,13 @@ class AppModule {
     }
 
     async editIdea(ctx) {
-        const idea = await Ideas.update(ctx.body, {
-            attributes: ['name', 'population'],
+        const idea = await Ideas.update(ctx.request.body, {
+            params: ['name', 'population'],
             where: {
                 id: ctx.params.id
             }
         });
+        console.log(idea);
         ctx.body = idea;
     }
 
