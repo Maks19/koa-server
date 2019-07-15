@@ -32,7 +32,7 @@ class AppModule {
 
     async addIdea(ctx) {
         const idea = await Ideas.create(ctx.request.body, {
-            params: ['description', 'title'],
+            params: ['description', 'title', 'userId'],
         });
         ctx.body = idea
     }
@@ -53,9 +53,10 @@ class AppModule {
             where: {
                 id: ctx.params.id
             },
-            raw: true
+            raw: true,
+            returning: true
         });
-        ctx.body = idea;
+        ctx.body = idea[1][0];;
     }
 
     async login(ctx) {
